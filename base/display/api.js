@@ -1157,16 +1157,20 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
       if (this.cancelled) {
         return;
       }
-      this.operatorListIdx = this.gfx.executeOperatorList(this.operatorList,
-                                        this.operatorListIdx,
-                                        this._continue.bind(this),
-                                        this.stepper);
-      if (this.operatorListIdx === this.operatorList.argsArray.length) {
-        this.running = false;
-        if (this.operatorList.lastChunk) {
-          this.gfx.endDrawing();
-          this.callback();
+      try {
+        this.operatorListIdx = this.gfx.executeOperatorList(this.operatorList,
+                                            this.operatorListIdx,
+                                            this._continue.bind(this),
+                                            this.stepper);
+        if (this.operatorListIdx === this.operatorList.argsArray.length) {
+            this.running = false;
+            if (this.operatorList.lastChunk) {
+              this.gfx.endDrawing();
+              this.callback();
+            }
         }
+      } catch (e) {
+          this.callback(e);
       }
     }
 
